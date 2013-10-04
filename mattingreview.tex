@@ -1,0 +1,76 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{default}
+
+\title{Natural Image Matting}
+\author{Philip Greggory Lee}
+\institute{
+ Electrical Engineering and Computer Science\\
+ Northwestern University\\
+ Evanston, IL 60208
+}
+
+\begin{document}
+
+\begin{frame}
+ \titlepage
+\end{frame}
+
+\section{Introduction}%========================================================
+
+\begin{frame}{The Problem}
+ \begin{itemize}
+  \item \textit{Alpha matting} is extracting an object from an image.
+  \item Each pixel $i$ is a mixture of foreground $F$ and background $B$ layers.
+ \end{itemize}
+ \begin{align}
+   I_i = \alpha_i F_i + (1-\alpha_i)B_i.
+ \end{align}
+ \begin{itemize}
+  \item $\alpha \in [0,1]$ is the mixing layer. Want to recover it.
+  \item 3 unknowns to estimate per pixel: severely underconstrained.
+ \end{itemize}
+\end{frame}
+
+\begin{frame}{What I Have Learned}
+ I have spent a very long time thinking about matting. Let me point out the
+ most important things I have learned:
+ \begin{itemize}
+  \item It is an ill-defined problem. No one can define ``foreground'' until
+        you have a specific purpose.
+  \item No one can \textit{really} solve it. The best they can do is build a
+        model of foreground and background appearance and tell you the
+        probability that a pixel belongs to foreground or background.
+  \item Every algorithm can perform very well when the user constraints are
+        dense. Everyone relies on this.
+ \end{itemize}
+\end{frame}
+
+\section{Matting by Laplacian}%================================================
+
+\begin{frame}{Poisson Matting \cite{sun2004poisson}}
+ 
+\end{frame}
+
+\begin{frame}{Closed-Form Matting \cite{levin2008closed}}
+ 
+\end{frame}
+
+\begin{frame}{Learning-Based Matting \cite{zheng-learning}}
+ 
+\end{frame}
+
+\begin{frame}{Fast Matting \cite{he2010fast}}
+ 
+\end{frame}
+
+
+% References ==================================================================
+\begin{frame}[allowframebreaks]
+ \frametitle{References}
+ \bibliographystyle{amsalpha}
+ \bibliography{mattingrefs.bib}
+\end{frame}
+
+\end{document}
