@@ -71,7 +71,35 @@
  \end{itemize}
 \end{frame}
 
-\section{Matting by Laplacian}%================================================
+\section{Early Methods}%=======================================================
+
+\begin{frame}[allowframebreaks]{Bayesian Matting \cite{chuang2001bayesian}}
+ Builds Gaussian color models
+ Does MAP estimation
+ Propagates F and B
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Grabcut \cite{rother2004grabcut}}
+ Constructs color histograms using scribbles.
+ Does hard segmentation by graph cut and color model.
+ Fits polyline to boundary, and applies a smoothing function to get continuous $\alpha$
+\end{frame}
+
+\begin{frame}[allowframebreaks]{\cite{wang2005iterative}}
+ Constructs local color models just as \cite{chuang2001bayesian}.
+ Discretizes $\alpha$ to 25 levels.
+ Uses belief propagation on uncertain nodes in an MRF to estimate unknown $\alpha$ values.
+\end{frame}
+
+\begin{frame}[allowframebreaks]{\cite{juan2005trimap}}
+ Focuses not on matting, but the input to matting: trimaps and how to generate them.
+ Uses color model and basic formulation of \cite{rother2004grabcut}.
+ Defines a new model for blended F/G regions.
+ Uses EM/MDL and Graph Cut for the trimap segmentation.
+ Fast.
+\end{frame}
+
+\section{Laplacian-Based Methods}%=============================================
 
 \begin{frame}[allowframebreaks]{Poisson Matting \cite{sun2004poisson}}
  \begin{itemize}
@@ -119,6 +147,16 @@
   \item Refining also consider pixels in $\Omega$ where $\alpha > 0.95$ for
         foreground and $\alpha < 0.05$ for background.
  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{\cite{grady2005random}}
+ The first Laplacian-based method?
+ First solves a 3x3 colorspace eigenvalue problem to find a good linear
+ color transformation that accentuates object boundaries.
+ Defines graph adjacency with Gaussian kernel whose covariance matrix is
+ the linear projector found above.
+ Solves for the minimizer of $\alpha^TL\alpha$.
+ GPU implementation.
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Closed-Form Matting \cite{levin2008closed}}
@@ -169,6 +207,49 @@
   \item $\gamma$ is the Lagrange multiplier for the equality constraints.
   \item This has the same form as \eqref{eq:poisson}
  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Robust Matting \cite{wang2007optimized}}
+ Focuses on generating the color models in \cite{chuang2001bayesian}.
+ Uses different criteria to select points for modeling F and B distributions.
+ Uses the formulation of \cite{levin2008closed} for Laplacian generation and solution.
+ (Based on the 2006 version of that paper).
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Geodesic Matting\cite{bai2007geodesic}}
+ Builds color model
+ Defines geodesic path distance based on color model
+\end{frame}
+
+\begin{frame}[allowframebreaks]{\cite{rhemann2008high}}
+ Use Grab Cut \cite{rother2004grabcut} to generate trimap.
+ Use Laplacian based on \cite{levin2008closed} and \cite{wang2007optimized}.
+ They obtain a blurry matte, so they do deblurring based on the assumption that
+ the true matte is binary.
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Spectral Matting \cite{levin2008spectral}}
+ Extends \cite{levin2008closed} a little.
+ Mattes must be in the nullspace of Laplacian $L$, so extract a few of it's null vectors.
+ Since the null vectors are not unique, want to find linear combinations that
+ look like partial mattes.
+ Solve a nonlinear problem involving the null vectors to produce ``matting components''
+ that can be selected by user to give final matte.
+\end{frame}
+
+\begin{frame}[allowframebreaks]{\cite{duchenne2008segmentation}}
+ Laplacian-based.
+ Introduces spatial component to the colorspace Gaussian kernel of
+ \cite{grady2005random} to define the Laplacian.
+ Introduces scaling parameter $\lambda$ (equivalently $s$) to kernel.
+ From what I can tell, this is just mostly explaining Laplacian methods. Not much novelty.
+\end{frame}
+
+\begin{frame}[allowframebreaks]{\cite{singaraju2009new}}
+ Modifies color line assumption of \cite{levin2008closed}.
+ In each local window, they inspect the rank of the color matrix.
+ If it is less than 4, they use distinct local weightings based on line-point
+ or point-point color models.
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Learning-Based Matting \cite{zheng-learning}}
@@ -253,85 +334,6 @@
    \caption{Trimap segmentation.}
   \end{figure}
  \end{itemize}
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Bayesian Matting \cite{chuang2001bayesian}}
- Builds Gaussian color models
- Does MAP estimation
- Propagates F and B
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Grabcut \cite{rother2004grabcut}}
- Constructs color histograms using scribbles.
- Does hard segmentation by graph cut and color model.
- Fits polyline to boundary, and applies a smoothing function to get continuous $\alpha$
-\end{frame}
-
-\begin{frame}[allowframebreaks]{\cite{wang2005iterative}}
- Constructs local color models just as \cite{chuang2001bayesian}.
- Discretizes $\alpha$ to 25 levels.
- Uses belief propagation on uncertain nodes in an MRF to estimate unknown $\alpha$ values.
-\end{frame}
-
-\begin{frame}[allowframebreaks]{\cite{juan2005trimap}}
- Focuses not on matting, but the input to matting: trimaps and how to generate them.
- Uses color model and basic formulation of \cite{rother2004grabcut}.
- Defines a new model for blended F/G regions.
- Uses EM/MDL and Graph Cut for the trimap segmentation.
- Fast.
-\end{frame}
-
-\begin{frame}[allowframebreaks]{\cite{grady2005random}}
- The first Laplacian-based method?
- First solves a 3x3 colorspace eigenvalue problem to find a good linear
- color transformation that accentuates object boundaries.
- Defines graph adjacency with Gaussian kernel whose covariance matrix is
- the linear projector found above.
- Solves for the minimizer of $\alpha^TL\alpha$.
- GPU implementation.
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Robust Matting \cite{wang2007optimized}}
- Focuses on generating the color models in \cite{chuang2001bayesian}.
- Uses different criteria to select points for modeling F and B distributions.
- Uses the formulation of \cite{levin2008closed} for Laplacian generation and solution.
- (Based on the 2006 version of that paper).
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Geodesic Matting\cite{bai2007geodesic}}
- Builds color model
- Defines geodesic path distance based on color model
-\end{frame}
-
-\begin{frame}[allowframebreaks]{\cite{rhemann2008high}}
- Use Grab Cut \cite{rother2004grabcut} to generate trimap.
- Use Laplacian based on \cite{levin2008closed} and \cite{wang2007optimized}.
- They obtain a blurry matte, so they do deblurring based on the assumption that
- the true matte is binary.
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Spectral Matting \cite{levin2008spectral}}
- Extends \cite{levin2008closed} a little.
- Mattes must be in the nullspace of Laplacian $L$, so extract a few of it's null vectors.
- Since the null vectors are not unique, want to find linear combinations that
- look like partial mattes.
- Solve a nonlinear problem involving the null vectors to produce ``matting components''
- that can be selected by user to give final matte.
-\end{frame}
-
-\begin{frame}[allowframebreaks]{\cite{duchenne2008segmentation}}
- Laplacian-based.
- Introduces spatial component to the colorspace Gaussian kernel of
- \cite{grady2005random} to define the Laplacian.
- Introduces scaling parameter $\lambda$ (equivalently $s$) to kernel.
- From what I can tell, this is just mostly explaining Laplacian methods. Not much novelty.
-\end{frame}
-
-\begin{frame}[allowframebreaks]{\cite{singaraju2009new}}
- Modifies color line assumption of \cite{levin2008closed}.
- In each local window, they inspect the rank of the color matrix.
- If it is less than 4, they use distinct local weightings based on line-point
- or point-point color models.
 \end{frame}
 
 \begin{frame}[allowframebreaks]{\cite{rhemann2010spatially}}
