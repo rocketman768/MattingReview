@@ -19,6 +19,7 @@
 }
 
 \providecommand{\defeq}{\stackrel{\Delta}{=}}
+\providecommand{\norm}[1]{\left\lVert #1 \right\rVert}
 
 \begin{document}
 
@@ -73,10 +74,47 @@
 
 \section{Early Methods}%=======================================================
 
-\begin{frame}[allowframebreaks]{Bayesian Matting \cite{chuang2001bayesian}}
- Builds Gaussian color models
- Does MAP estimation
- Propagates F and B
+\begin{frame}{Bayesian Matting \cite{chuang2001bayesian} I}
+ \begin{figure}
+  \includegraphics[width=4cm]{images/bayesian.png}
+  \caption{Bayesian matting's local alpha/color model.}
+ \end{figure}
+ \begin{itemize}
+  \item This work build a Bayesian $\alpha$/color model assuming all likelihoods
+        and priors are Gaussian.
+  \begin{align}
+   P(F,B,\alpha|C) \propto P(C|F,B,\alpha)P(F)P(B)P(\alpha)
+  \end{align}
+  \item $C$ is the observed image color, and $F$,$B$,$\alpha$ have their usual connotations.
+ \end{itemize}
+\end{frame}
+
+\begin{frame}{Bayesian Matting \cite{chuang2001bayesian} II}
+ \begin{itemize}
+  \item The uninformative uniform prior is taken on $\alpha$, so that the MAP estimation is
+  \begin{align}
+   (F,B,\alpha) = \arg \max_{F,B,\alpha} P(C|F,B,\alpha)P(F)P(B).
+  \end{align}
+  \item The mean and covariance matrices for $P(F)$ and $P(B)$ are estimated
+        from nearby known foreground and background pixels.
+  \item The parameters are found by maximizing the log likelihood.
+  \item The log likelihood of the data term is
+  \begin{align}
+   L(C|F,B,\alpha) = -\norm{C-\alpha F - (1-\alpha)B}/\sigma_C^2
+  \end{align}
+  \item This term, due to multiplication of $\alpha$, makes the function non-convex.
+ \end{itemize}
+\end{frame}
+
+\begin{frame}{Bayesian Matting \cite{chuang2001bayesian} III}
+ \begin{itemize}
+  \item They do an EM-like iteration, first fixing $\alpha$, getting $F$ and $B$ by
+        convex optimization, then fixing $F$ and $B$ and getting $\alpha$.
+  \item They do this procedure to estimate the parameters at each pixel in the
+        unknown region marching inward from the constraints.
+  \item If the computed $\alpha$ is very near 1 or 0, then that pixel is used in
+        subsequent computations in the local $F$ or $B$ model (resp.).
+ \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Grabcut \cite{rother2004grabcut}}
