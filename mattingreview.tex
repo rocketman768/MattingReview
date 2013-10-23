@@ -117,10 +117,36 @@
  \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Grabcut \cite{rother2004grabcut}}
- Constructs color histograms using scribbles.
- Does hard segmentation by graph cut and color model.
- Fits polyline to boundary, and applies a smoothing function to get continuous $\alpha$
+\begin{frame}{Grabcut \cite{rother2004grabcut} I}
+ \begin{itemize}
+  \item Like \cite{chuang2001bayesian}, they develop a statistical $\alpha$/color model.
+  \item This one is assumed to be a Gibbs distribution with Gibbs energy,
+  \begin{align}
+   E(\alpha,I,\theta) = U(\alpha,I,k,\theta)+V(\alpha,I)
+  \end{align}
+  \item $U$ is the data-fidelity term, and $V$ is the $\alpha$ coherence term.
+  \item They take a pair of GMMs, one for $F$ and one for $B$, to construct $U$.
+ \end{itemize}
+\end{frame}
+
+\begin{frame}{Grabcut \cite{rother2004grabcut} II}
+ \begin{align}
+  U(\alpha,I,k,\theta) &= \sum_i -\log p(I_i \mid \alpha_i,k_i,\theta) -\log \pi(\alpha_i,k_i) \\
+  V(\alpha,I) &= \gamma \sum_{(i,j) \in G} [\alpha_i \neq \alpha_j] \exp(-\beta\norm{I_i-I_j}^2)
+ \end{align}
+ \begin{itemize}
+  \item Here $p$ is a Gaussian corresponding to the $k_i$ component of the GMM to which
+        the pixel is assigned, and $\pi$ is the mixture weights.
+  \item To solve, they do an iterative scheme:
+  \begin{enumerate}
+   \item Assign GMM components $k$ to pixels.
+   \item Learn GMM parameters $\theta$ from $I$.
+   \item Estimate a binary $\alpha$ by min-cut on $E$.
+   \item Repeat until convergence.
+   \item Fit polyline to $\alpha$ boundary and apply smoothing function to get
+         a continuously-valued matte.
+  \end{enumerate}
+ \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{\cite{wang2005iterative}}
