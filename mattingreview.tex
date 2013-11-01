@@ -150,6 +150,19 @@
 \end{frame}
 
 \begin{frame}[allowframebreaks]{\cite{wang2005iterative}}
+ \begin{itemize}
+  \item Based mostly on \cite{chuang2001bayesian} and \cite{rother2004grabcut}
+  \item They use GMM color models for $F$ and $B$.
+  \item Their MRF formulation discretizes $\alpha$ to 25 levels.
+  \item It is hard to follow their formulation for the data term.
+  \item The smoothness term is a simple Gaussian kernel.
+  \item First, they build the GMMs.
+  \item Next, they run loopy BP to estimate $\alpha$ in the unknown region.
+  \item Next, they update the local and global color models.
+  \item Pixels with very certain $\alpha$ values are assimilated as ``known''.
+  \item This is repeated until all $\alpha$ values have large certainty.
+ \end{itemize}
+
  Constructs local color models just as \cite{chuang2001bayesian}.
  Discretizes $\alpha$ to 25 levels.
  Uses belief propagation on uncertain nodes in an MRF to estimate unknown $\alpha$ values.
